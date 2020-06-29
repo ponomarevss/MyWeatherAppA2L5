@@ -1,0 +1,94 @@
+<resources>
+    <string name="app_name">Weather</string>
+    <string name="place">set place</string>
+    <string name="temperature_value">-88</string>
+    <string name="weather">Partly cloudy</string>
+    <string name="partly_cloudy" translatable="false">partly_cloudy</string>
+    <string name="cloudy" translatable="false">cloudy</string>
+    <string name="sunny" translatable="false">sunny</string>
+    <string name="settings_button" translatable="false">settings</string>
+    <string name="place_label">Location:</string>
+    <string name="current_location">not specified</string>
+    <string name="background" translatable="false">background</string>
+
+    <string name="more_info">more info ></string>
+    <string name="last_places"><![CDATA[last places >]]></string>
+    <string name="day">day</string>
+    <string name="hour_value">00:00</string>
+    <string name="back_to_main_button">back_to_main_button</string>
+    <string name="back_to_settings_button">back_to_settings_button</string>
+    <string name="locate">locate</string>
+    <string name="city">city</string>
+    <string name="loading">loading…</string>
+    <string name="failed_to_get_data">failed to get data</string>
+
+
+    <string name="places_screen_button">%s ></string>
+    <string name="url">https://openweathermap.org/city/</string>
+
+    <string name="commit">commit</string>
+    <string name="city_image">city image</string>
+    <string name="detail_image">detail image</string>
+    <string name="input_place">input place</string>
+
+    <!--    bottom navigation menu-->
+    <string name="title_home">Home</string>
+    <string name="title_settings">Settings</string>
+
+    <!--    to settings fragment-->
+    <string name="coordinates">Coordinates</string>
+    <!--    <string name="weather_description">Weather description</string>-->
+    <string name="temperature_details">Temperature details</string>
+    <string name="atmospheric_pressure_and_humidity">Atmospheric pressure and humidity</string>
+    <string name="visibility">Visibility</string>
+    <string name="wind_speed_and_direction">Wind speed and direction</string>
+    <string name="sunrise_and_sunset">Sunrise and sunset</string>
+    <string name="dark_theme">Dark theme</string>
+
+    <!--    main fragment fields-->
+    <string name="latitude_field">lat:</string>
+    <string name="longitude_field">lon:</string>
+    <string name="feels_like_field">feels:</string>
+    <string name="temp_min_field">min:</string>
+    <string name="temp_max_field">max:</string>
+    <string name="pressure_field">pressure:</string>
+    <string name="humidity_field">humidity:</string>
+    <string name="visibility_field">visibility:</string>
+    <string name="wind_speed_field">wind speed:</string>
+    <string name="wind_direction_field">wind direction:</string>
+    <string name="sunrise_field">sunrise:</string>
+    <string name="sunset_field">sunset:</string>
+
+    <!--    measure units-->
+    <string name="coordinates_unit">°</string>
+    <string name="temperature_unit">°C</string>
+    <string name="pressure_unit">kPa</string>
+    <string name="humidity_unit">%</string>
+    <string name="visibility_unit">m</string>
+    <string name="wind_speed_unit">m/s</string>
+    <string name="wind_direction_unit">deg</string>
+    <string name="time_unit">sec</string>
+
+
+    <string name="title_activity_main">Weather</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_place">Place</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_history">History</string>
+
+    <string name="home_second">Home Second</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="lets_go_to_web">Let\'s go to web!</string>
+    <string name="icon_uri">https://openweathermap.org/img/wn/%s@2x.png</string>
+
+
+</resources>

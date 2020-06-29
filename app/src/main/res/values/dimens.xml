@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="text_size_normal">20sp</dimen>
+    <dimen name="text_size_big">50sp</dimen>
+    <dimen name="text_size_bigger">30sp</dimen>
+    <dimen name="image_size_normal">40dp</dimen>
+    <dimen name="image_size_bigger">60dp</dimen>
+    <dimen name="image_size_big">120dp</dimen>
+    <dimen name="weather_width">150dp</dimen>
+    <dimen name="margin_normal">50dp</dimen>
+    <dimen name="margin_small">10dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="nav_header_vertical_spacing">8dp</dimen>
+    <dimen name="nav_header_height">176dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+</resources>

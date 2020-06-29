@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="cities">
+        <item>Астрахань</item>
+        <item>Барнаул</item>
+        <item>Владивосток</item>
+        <item>Волгоград</item>
+        <item>Воронеж</item>
+        <item>Екатеринбург</item>
+        <item>Ижевск</item>
+        <item>Иркутск</item>
+        <item>Казань</item>
+        <item>Кемерово</item>
+        <item>Киров</item>
+        <item>Краснодар</item>
+        <item>Красноярск</item>
+        <item>Липецк</item>
+        <item>Махачкала</item>
+        <item>Москва</item>
+        <item>Набережные Челны</item>
+        <item>Нижний Новгород</item>
+        <item>Новокузнецк</item>
+        <item>Новосибирск</item>
+        <item>Омск</item>
+        <item>Оренбург</item>
+        <item>Пенза</item>
+        <item>Пермь</item>
+        <item>Ростов-на-Дону</item>
+        <item>Рязань</item>
+        <item>Самара</item>
+        <item>Санкт-Петербург</item>
+        <item>Саратов</item>
+        <item>Тольятти</item>
+        <item>Томск</item>
+        <item>Тюмень</item>
+        <item>Ульяновск</item>
+        <item>Уфа</item>
+        <item>Хабаровск</item>
+        <item>Челябинск</item>
+        <item>Ярославль</item>
+    </string-array>
+    <string-array name="cities_id">
+        <item>580497</item>
+        <item>1510853</item>
+        <item>2013348</item>
+        <item>472757</item>
+        <item>472045</item>
+        <item>1486209</item>
+        <item>554840</item>
+        <item>2023469</item>
+        <item>551487</item>
+        <item>1503901</item>
+        <item>548408</item>
+        <item>542420</item>
+        <item>1502026</item>
+        <item>535121</item>
+        <item>532096</item>
+        <item>524901</item>
+        <item>523750</item>
+        <item>520555</item>
+        <item>1496990</item>
+        <item>1496747</item>
+        <item>1496153</item>
+        <item>515003</item>
+        <item>511565</item>
+        <item>511196</item>
+        <item>501175</item>
+        <item>500096</item>
+        <item>499099</item>
+        <item>498817</item>
+        <item>498677</item>
+        <item>482283</item>
+        <item>1489425</item>
+        <item>1488754</item>
+        <item>479123</item>
+        <item>479561</item>
+        <item>2022890</item>
+        <item>1508291</item>
+        <item>468902</item>
+    </string-array>
+    <string-array name="cities_coord">
+        <item>46.35 48.04</item>
+        <item>53.36 83.76</item>
+        <item>43.11 131.87</item>
+        <item>48.72 44.5</item>
+        <item>51.67 39.17</item>
+        <item>56.86 60.61</item>
+        <item>56.85 53.23</item>
+        <item>52.3 104.3</item>
+        <item>55.79 49.12</item>
+        <item>55.33 86.08</item>
+        <item>58.6 49.66</item>
+        <item>45.03 38.98</item>
+        <item>56.01 92.79</item>
+        <item>52.6 39.57</item>
+        <item>42.98 47.5</item>
+        <item>55.75 37.62</item>
+        <item>55.76 52.43</item>
+        <item>56.33 44</item>
+        <item>53.76 87.11</item>
+        <item>55.04 82.93</item>
+        <item>55 73.4</item>
+        <item>51.77 55.1</item>
+        <item>53.2 45</item>
+        <item>58.02 56.29</item>
+        <item>47.24 39.71</item>
+        <item>54.62 39.74</item>
+        <item>53.2 50.15</item>
+        <item>59.89 30.26</item>
+        <item>51.57 46.03</item>
+        <item>53.53 49.35</item>
+        <item>56.5 84.97</item>
+        <item>57.15 65.53</item>
+        <item>54.33 48.4</item>
+        <item>54.77 56.04</item>
+        <item>48.48 135.09</item>
+        <item>55.15 61.43</item>
+        <item>57.63 39.87</item>
+    </string-array>
+    <integer-array name="city_images">
+        <item>@drawable/ci_astrahan</item>
+        <item>@drawable/ci_barnaul</item>
+        <item>@drawable/ci_vladivostok</item>
+        <item>@drawable/ci_volgograd</item>
+        <item>@drawable/ci_voronezh</item>
+        <item>@drawable/ci_yekaterinburg</item>
+        <item>@drawable/ci_izhevsk</item>
+        <item>@drawable/ci_irkutsk</item>
+        <item>@drawable/ci_kazan</item>
+        <item>@drawable/ci_kemerovo</item>
+        <item>@drawable/ci_kirov</item>
+        <item>@drawable/ci_krasnodar</item>
+        <item>@drawable/ci_krasnoyarsk</item>
+        <item>@drawable/ci_lipetsk</item>
+        <item>@drawable/ci_makhachkala</item>
+        <item>@drawable/ci_moscow</item>
+        <item>@drawable/ci_naberezhnie_chelny</item>
+        <item>@drawable/ci_nizhny_novgorod</item>
+        <item>@drawable/ci_novokuznetsk</item>
+        <item>@drawable/ci_novosibirsk</item>
+        <item>@drawable/ci_omsk</item>
+        <item>@drawable/ci_orenburg</item>
+        <item>@drawable/ci_penza</item>
+        <item>@drawable/ci_perm</item>
+        <item>@drawable/ci_rostov_na_donu</item>
+        <item>@drawable/ci_ryazan</item>
+        <item>@drawable/ci_samara</item>
+        <item>@drawable/ci_saint_petersburg</item>
+        <item>@drawable/ci_saratov</item>
+        <item>@drawable/ci_togliatti</item>
+        <item>@drawable/ci_tomsk</item>
+        <item>@drawable/ci_tyumen</item>
+        <item>@drawable/ci_ulyanovsk</item>
+        <item>@drawable/ci_ufa</item>
+        <item>@drawable/ci_khabarovsk</item>
+        <item>@drawable/ci_chelyabinsk</item>
+        <item>@drawable/ci_yaroslavl</item>
+    </integer-array>
+
+    <string-array name="days">
+        <item>Today</item>
+        <item>Tomorrow</item>
+        <item>Next</item>
+    </string-array>
+    <string-array name="hours">
+        <item>00:00</item>
+        <item>03:00</item>
+        <item>06:00</item>
+        <item>09:00</item>
+        <item>12:00</item>
+        <item>15:00</item>
+        <item>18:00</item>
+        <item>21:00</item>
+    </string-array>
+
+    <string-array name="detail">
+        <item>Wind</item>
+        <item>Humidity</item>
+        <item>Pressure</item>
+    </string-array>
+    <string-array name="measure_unit">
+        <item>m/s</item>
+        <item>%</item>
+        <item>mmHg</item>
+    </string-array>
+</resources>
