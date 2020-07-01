@@ -24,6 +24,10 @@ import com.ponomarevss.myweatherapp.RequestHandler;
 import com.ponomarevss.myweatherapp.WeatherRequest;
 import com.squareup.picasso.Picasso;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,13 +37,18 @@ import static com.ponomarevss.myweatherapp.Constants.INDEX;
 import static com.ponomarevss.myweatherapp.Constants.INIT_INDEX;
 import static com.ponomarevss.myweatherapp.Constants.PLACE;
 import static com.ponomarevss.myweatherapp.Constants.PRESSURE_AND_HUMIDITY;
-import static com.ponomarevss.myweatherapp.Constants.SET_PLACE;
 import static com.ponomarevss.myweatherapp.Constants.SUNRISE_AND_SUNSET;
 import static com.ponomarevss.myweatherapp.Constants.TEMPERATURE_DETAILS;
 import static com.ponomarevss.myweatherapp.Constants.VISIBILITY;
 import static com.ponomarevss.myweatherapp.Constants.WIND_SPEED_AND_DIRECTION;
 
 public class HomeFragment extends Fragment {
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -54,6 +63,17 @@ public class HomeFragment extends Fragment {
             new WeatherRequest(this, view, getCityId())
                     .makeRequest();
         }
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(RequestHandler requestHandler) {
+        init(requireView(), requestHandler);
     }
 
     public void init(@NonNull View view, RequestHandler requestHandler) {
@@ -199,7 +219,7 @@ public class HomeFragment extends Fragment {
     private String getPlace() {
         return requireActivity()
                 .getPreferences(MODE_PRIVATE)
-                .getString(PLACE, SET_PLACE);
+                .getString(PLACE, getResources().getStringArray(R.array.cities)[INIT_INDEX]);
     }
 
     private void setPlaceView(View view) {
@@ -216,11 +236,7 @@ public class HomeFragment extends Fragment {
     private void setBackgroundView(View view) {
         ImageView background = view.findViewById(R.id.background);
         TypedArray images = getResources().obtainTypedArray(R.array.city_images);
-        if (getBackgroundIndex() == INIT_INDEX) {
-            background.setImageResource(R.drawable.background_default);
-        } else {
-            background.setImageResource(images.getResourceId(getBackgroundIndex(), -1));
-        }
+        background.setImageResource(images.getResourceId(getBackgroundIndex(), -1));
         background.setVisibility(View.VISIBLE);
         images.recycle();
     }

@@ -18,7 +18,6 @@ import com.ponomarevss.myweatherapp.R;
 import static android.content.Context.MODE_PRIVATE;
 import static com.ponomarevss.myweatherapp.Constants.INDEX;
 import static com.ponomarevss.myweatherapp.Constants.PLACE;
-import static com.ponomarevss.myweatherapp.Constants.SET_PLACE;
 
 public class PlaceFragment extends Fragment {
 
@@ -33,9 +32,6 @@ public class PlaceFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        //поле выбранного места
-        setPlaceTextView(view);
 
         //создаем список городов
         final String[] cities = getResources().getStringArray(R.array.cities);
@@ -55,27 +51,17 @@ public class PlaceFragment extends Fragment {
             public void OnItemClick(String place, int index) {
                 savePlace(place);
                 saveIndex(index);
-                placeTextView.setText(place);
+                requireActivity().onBackPressed();
             }
         });
         citiesRecyclerView.setAdapter(adapter);
 
     }
 
-    private void setPlaceTextView(@NonNull View view) {
-        placeTextView = view.findViewById(R.id.place_set);
-        placeTextView.setText(getPlace());
-    }
-
     private void savePlace(String place) {
         if (getActivity() != null) {
             getActivity().getPreferences(MODE_PRIVATE).edit().putString(PLACE, place).apply();
         }
-    }
-
-    private String getPlace() {
-        assert getActivity() != null;
-        return getActivity().getPreferences(MODE_PRIVATE).getString(PLACE, SET_PLACE);
     }
 
     private void saveIndex(int index) {
