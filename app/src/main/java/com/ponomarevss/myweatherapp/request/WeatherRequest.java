@@ -1,12 +1,14 @@
-package com.ponomarevss.myweatherapp;
+package com.ponomarevss.myweatherapp.request;
 
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.ponomarevss.myweatherapp.MainActivity;
+import com.ponomarevss.myweatherapp.R;
 import com.ponomarevss.myweatherapp.rest.OpenWeatherRepo;
-import com.ponomarevss.myweatherapp.rest.entities.WeatherRequestRestModel;
+import com.ponomarevss.myweatherapp.rest.weatherModel.WeatherRequestRestModel;
 
 import org.greenrobot.eventbus.EventBus;
 

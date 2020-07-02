@@ -1,6 +1,8 @@
-package com.ponomarevss.myweatherapp;
+package com.ponomarevss.myweatherapp.request;
 
-import com.ponomarevss.myweatherapp.rest.entities.WeatherRequestRestModel;
+import com.ponomarevss.myweatherapp.rest.weatherModel.WeatherRequestRestModel;
+
+import java.util.Date;
 
 public class RequestHandler {
 
@@ -63,5 +65,9 @@ public class RequestHandler {
     }
     public String getWindDeg() {
         return String.valueOf(response.wind.deg);
+    }
+
+    public String getDate() {
+        return String.valueOf(new Date(response.dt * 1000));
     }
 }

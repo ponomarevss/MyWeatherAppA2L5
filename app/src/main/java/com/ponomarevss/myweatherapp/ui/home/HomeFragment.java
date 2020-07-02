@@ -13,15 +13,20 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import com.ponomarevss.myweatherapp.App;
 import com.ponomarevss.myweatherapp.R;
-import com.ponomarevss.myweatherapp.RequestHandler;
-import com.ponomarevss.myweatherapp.WeatherRequest;
+import com.ponomarevss.myweatherapp.request.RequestHandler;
+import com.ponomarevss.myweatherapp.request.WeatherRequest;
+import com.ponomarevss.myweatherapp.room.WeatherDao;
+import com.ponomarevss.myweatherapp.room.WeatherRecord;
+import com.ponomarevss.myweatherapp.room.WeatherSource;
 import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
@@ -74,6 +79,19 @@ public class HomeFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(RequestHandler requestHandler) {
         init(requireView(), requestHandler);
+        addRecordToDatabase(requestHandler);
+    }
+
+    private void addRecordToDatabase(RequestHandler requestHandler) {
+        WeatherDao weatherDao = App
+                .getInstance()
+                .getWeatherDao();
+        WeatherSource weatherSource = new WeatherSource(weatherDao);
+        WeatherRecord weatherRecord = new WeatherRecord();
+        weatherRecord.place = getPlace();
+        weatherRecord.temperature = requestHandler.getTemp();
+        weatherRecord.date = requestHandler.getDate();
+        weatherSource.addWeatherRecord(weatherRecord);
     }
 
     public void init(@NonNull View view, RequestHandler requestHandler) {
@@ -88,6 +106,7 @@ public class HomeFragment extends Fragment {
         showWindView(view, requestHandler);
         showSunView(view, requestHandler);
         goToBrowserButton(view);
+        Toast.makeText(getActivity(), requestHandler.getDate(), Toast.LENGTH_LONG).show();
     }
 
     private void showWeatherIconView(View view, RequestHandler requestHandler) {

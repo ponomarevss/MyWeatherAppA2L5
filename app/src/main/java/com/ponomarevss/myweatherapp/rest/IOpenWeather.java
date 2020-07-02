@@ -1,6 +1,6 @@
 package com.ponomarevss.myweatherapp.rest;
 
-import com.ponomarevss.myweatherapp.rest.entities.WeatherRequestRestModel;
+import com.ponomarevss.myweatherapp.rest.weatherModel.WeatherRequestRestModel;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
