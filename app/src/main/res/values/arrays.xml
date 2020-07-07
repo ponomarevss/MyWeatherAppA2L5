@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="cities">
-        <item>Астрахань</item>
-        <item>Барнаул</item>
-        <item>Владивосток</item>
-        <item>Волгоград</item>
-        <item>Воронеж</item>
-        <item>Екатеринбург</item>
-        <item>Ижевск</item>
-        <item>Иркутск</item>
-        <item>Казань</item>
-        <item>Кемерово</item>
-        <item>Киров</item>
-        <item>Краснодар</item>
-        <item>Красноярск</item>
-        <item>Липецк</item>
-        <item>Махачкала</item>
-        <item>Москва</item>
-        <item>Набережные Челны</item>
-        <item>Нижний Новгород</item>
-        <item>Новокузнецк</item>
-        <item>Новосибирск</item>
-        <item>Омск</item>
-        <item>Оренбург</item>
-        <item>Пенза</item>
-        <item>Пермь</item>
-        <item>Ростов-на-Дону</item>
-        <item>Рязань</item>
-        <item>Самара</item>
-        <item>Санкт-Петербург</item>
-        <item>Саратов</item>
-        <item>Тольятти</item>
-        <item>Томск</item>
-        <item>Тюмень</item>
-        <item>Ульяновск</item>
-        <item>Уфа</item>
-        <item>Хабаровск</item>
-        <item>Челябинск</item>
-        <item>Ярославль</item>
+        <item>Astrakhan</item>
+        <item>Barnaul</item>
+        <item>Vladivostok</item>
+        <item>Volgograd</item>
+        <item>Voronezh</item>
+        <item>Ekaterinburg</item>
+        <item>Izhevsk</item>
+        <item>Irkutsk</item>
+        <item>Kazan’</item>
+        <item>Kemerovo</item>
+        <item>Kirov</item>
+        <item>Krasnodar</item>
+        <item>Krasnoyarsk</item>
+        <item>Lipetsk</item>
+        <item>Makhachkala</item>
+        <item>Moscow</item>
+        <item>Naberezhnye Chelny</item>
+        <item>Nizhny Novgorod</item>
+        <item>Novokuznetsk</item>
+        <item>Novosibirsk</item>
+        <item>Omsk</item>
+        <item>Orenburg</item>
+        <item>Penza</item>
+        <item>Perm</item>
+        <item>Rostov-on-Don</item>
+        <item>Ryazan</item>
+        <item>Samara</item>
+        <item>Saint Petersburg</item>
+        <item>Saratov</item>
+        <item>Tolyatti</item>
+        <item>Tomsk</item>
+        <item>Tyumen</item>
+        <item>Ulyanovsk</item>
+        <item>Ufa</item>
+        <item>Khabarovsk</item>
+        <item>Chelyabinsk</item>
+        <item>Yaroslavl</item>
     </string-array>
     <string-array name="cities_id">
         <item>580497</item>

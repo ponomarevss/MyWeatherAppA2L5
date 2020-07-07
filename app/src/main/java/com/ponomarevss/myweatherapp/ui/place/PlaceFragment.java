@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,11 +16,8 @@ import com.ponomarevss.myweatherapp.R;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.ponomarevss.myweatherapp.Constants.INDEX;
-import static com.ponomarevss.myweatherapp.Constants.PLACE;
 
 public class PlaceFragment extends Fragment {
-
-    private TextView placeTextView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -33,7 +29,6 @@ public class PlaceFragment extends Fragment {
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        //создаем список городов
         final String[] cities = getResources().getStringArray(R.array.cities);
         final TypedArray images = getResources().obtainTypedArray(R.array.city_images);
         if (getActivity() == null) return;
@@ -48,8 +43,7 @@ public class PlaceFragment extends Fragment {
         //передаем интерфейс ClickListener'а
         adapter.setClickListener(new CitiesRecyclerAdapter.CitiesRecyclerClickListener() {
             @Override
-            public void OnItemClick(String place, int index) {
-                savePlace(place);
+            public void OnItemClick(int index) {
                 saveIndex(index);
                 requireActivity().onBackPressed();
             }
@@ -58,15 +52,15 @@ public class PlaceFragment extends Fragment {
 
     }
 
-    private void savePlace(String place) {
-        if (getActivity() != null) {
-            getActivity().getPreferences(MODE_PRIVATE).edit().putString(PLACE, place).apply();
-        }
-    }
-
     private void saveIndex(int index) {
-        if (getActivity() != null) {
-            getActivity().getPreferences(MODE_PRIVATE).edit().putInt(INDEX, index).apply();
-        }
+//        Intent intent = new Intent(getContext(), MainActivity.class);
+//        Bundle bundle = new Bundle();
+//        bundle.putInt(INDEX, index);
+//        intent.putExtras(bundle);
+        requireActivity()
+                .getPreferences(MODE_PRIVATE)
+                .edit()
+                .putInt(INDEX, index)
+                .apply();
     }
 }
