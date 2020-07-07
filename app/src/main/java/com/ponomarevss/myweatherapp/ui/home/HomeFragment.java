@@ -64,6 +64,19 @@ import static com.ponomarevss.myweatherapp.Constants.WSPEED2;
 public class HomeFragment extends Fragment {
 
     private RequestHandler requestHandler;
+    private ImageView background;
+    private TextView placeTextView;
+    private LinearLayout coordinatesLayout;
+    private ImageView weatherIcon;
+    private TextView temperatureView;
+    private TextView temperatureUnitView;
+    private TextView weatherDescriptionView;
+    private LinearLayout temperatureDetailsLayout;
+    private LinearLayout pressureHumidityLayout;
+    private LinearLayout windLayout;
+    private LinearLayout visibilityLayout;
+    private LinearLayout sunLayout;
+    private TextView moreInfo;
 
     @Override
     public void onStart() {
@@ -79,6 +92,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        init(view);
 
         //если первый запуск, делаем запрос по инициальному индексу. в дальнейшем запрос изменится на запрос по геоданным
         if (restoreStringData(PLACE2).equals(PLACE2)) {
@@ -87,24 +101,24 @@ public class HomeFragment extends Fragment {
 
         //если данные в shared preferences актуальные, то инициализируем фрагмент сохраненными данными
         else if (actualDate() && actualPlace()) {
-            setBackgroundView(view);
-            setPlaceView(view, restoreStringData(PLACE2));
-            showCoordinatesView(view, restoreStringData(LAT2),
+            setBackgroundView();
+            setPlaceView(restoreStringData(PLACE2));
+            setCoordinatesView(restoreStringData(LAT2),
                     restoreStringData(LON2));
-            showWeatherIconView(view, restoreStringData(ICON2));
-            showTemperatureView(view, restoreStringData(TEMP2));
-            showWeatherDescriptionView(view, restoreStringData(DESCR2));
-            showTemperatureDetailsView(view, restoreStringData(FEELS2),
+            setWeatherIconView(restoreStringData(ICON2));
+            setTemperatureView(restoreStringData(TEMP2));
+            setWeatherDescriptionView(restoreStringData(DESCR2));
+            setTemperatureDetailsView(restoreStringData(FEELS2),
                     restoreStringData(TMAX2),
                     restoreStringData(TMIN2));
-            showPressureHumidityView(view, restoreStringData(PRESS2),
+            setPressureHumidityView(restoreStringData(PRESS2),
                     restoreStringData(HUM2));
-            showWindView(view, restoreStringData(WSPEED2),
+            setWindView(restoreStringData(WSPEED2),
                     restoreStringData(WDIR2));
-            showVisibilityView(view, restoreStringData(VIS2));
-            showSunView(view, restoreStringData(SRISE2),
+            setVisibilityView(restoreStringData(VIS2));
+            setSunView(restoreStringData(SRISE2),
                     restoreStringData(SSET2));
-            goToBrowserButton(view);
+            goToBrowserButton();
         }
 
         //если данные не актуальные выполняем новый запрос
@@ -126,48 +140,50 @@ public class HomeFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(RequestHandler requestHandler) {
         this.requestHandler = requestHandler;
-        setBackgroundView(requireView());
-        setPlaceView(requireView(), requestHandler.getPlace());
-        showCoordinatesView(requireView(), requestHandler.getCoordLat(),
+        setBackgroundView();
+        setPlaceView(requestHandler.getPlace());
+        setCoordinatesView(requestHandler.getCoordLat(),
                 requestHandler.getCoordLon());
-        showWeatherIconView(requireView(), requestHandler.getIcon());
-        showTemperatureView(requireView(), requestHandler.getTemp());
-        showWeatherDescriptionView(requireView(), requestHandler.getWeatherDescription());
-        showTemperatureDetailsView(requireView(), requestHandler.getTempFeelsLike(),
+        setWeatherIconView(requestHandler.getIcon());
+        setTemperatureView(requestHandler.getTemp());
+        setWeatherDescriptionView(requestHandler.getWeatherDescription());
+        setTemperatureDetailsView(requestHandler.getTempFeelsLike(),
                 requestHandler.getTempMax(),
                 requestHandler.getTempMin());
-        showPressureHumidityView(requireView(), requestHandler.getPressure(),
+        setPressureHumidityView(requestHandler.getPressure(),
                 requestHandler.getHumidity());
-        showWindView(requireView(), requestHandler.getWindSpeed(),
+        setWindView(requestHandler.getWindSpeed(),
                 requestHandler.getWindDeg());
-        showVisibilityView(requireView(), requestHandler.getVisibility());
-        showSunView(requireView(), requestHandler.getSunrise(),
+        setVisibilityView(requestHandler.getVisibility());
+        setSunView(requestHandler.getSunrise(),
                 requestHandler.getSunset());
-        goToBrowserButton(requireView());
+        goToBrowserButton();
 
         if (!actualPlace()) addRecordToDatabase(requestHandler); //если меняется место, добавляем запись в историю
         saveFragmentData(); //сохраняем данные в Shared Preferences
     }
 
-    private void addRecordToDatabase(RequestHandler requestHandler) {
-        WeatherDao weatherDao = App
-                .getInstance()
-                .getWeatherDao();
-        WeatherSource weatherSource = new WeatherSource(weatherDao);
-        WeatherRecord weatherRecord = new WeatherRecord();
-        weatherRecord.place = requestHandler.getPlace();
-        weatherRecord.temperature = requestHandler.getTemp();
-        weatherRecord.date = requestHandler.getDate();
-        weatherSource.addWeatherRecord(weatherRecord);
+    private void init(@NonNull View view) {
+        background = view.findViewById(R.id.background);
+        placeTextView = view.findViewById(R.id.place);
+        coordinatesLayout = view.findViewById(R.id.coordinates_layout);
+        weatherIcon = view.findViewById(R.id.weather_icon);
+        temperatureView = view.findViewById(R.id.temperature_value);
+        temperatureUnitView = view.findViewById(R.id.temperature_unit);
+        weatherDescriptionView = view.findViewById(R.id.weather_description);
+        temperatureDetailsLayout = view.findViewById(R.id.temperature_details_layout);
+        pressureHumidityLayout = view.findViewById(R.id.pressure_humidity_layout);
+        windLayout = view.findViewById(R.id.wind_layout);
+        visibilityLayout = view.findViewById(R.id.visibility_layout);
+        sunLayout = view.findViewById(R.id.sun_layout);
+        moreInfo = view.findViewById(R.id.more_info);
     }
 
-    private void setPlaceView(@NonNull View view, String place) {
-        TextView placeTextView = view.findViewById(R.id.place);
+    private void setPlaceView(String place) {
         placeTextView.setText(place);
     }
 
-    private void showCoordinatesView(@NonNull View view, String lat, String lon) {
-        LinearLayout coordinatesLayout = view.findViewById(R.id.coordinates_layout);
+    private void setCoordinatesView(String lat, String lon) {
         makeField(coordinatesLayout, R.string.latitude_field, lat, R.string.coordinates_unit);
         makeField(coordinatesLayout, R.string.longitude_field, lon, R.string.coordinates_unit);
         if (requireActivity()
@@ -178,27 +194,22 @@ public class HomeFragment extends Fragment {
         else coordinatesLayout.setVisibility(View.GONE);
     }
 
-    private void showWeatherIconView(@NonNull View view, String icon) {
-        ImageView weatherIcon = view.findViewById(R.id.weather_icon);
+    private void setWeatherIconView(String icon) {
         Picasso.get()
                 .load(String.format(getString(R.string.icon_uri), icon))
                 .into(weatherIcon);
     }
 
-    private void showTemperatureView(@NonNull View view, String temp) {
-        TextView temperatureView = view.findViewById(R.id.temperature_value);
+    private void setTemperatureView(String temp) {
         temperatureView.setText(temp);
-        TextView temperatureUnitView = view.findViewById(R.id.temperature_unit);
         temperatureUnitView.setText(R.string.temperature_unit);
     }
 
-    private void showWeatherDescriptionView(@NonNull View view, String description) {
-        TextView weatherDescriptionView = view.findViewById(R.id.weather_description);
+    private void setWeatherDescriptionView(String description) {
         weatherDescriptionView.setText(description);
     }
 
-    private void showTemperatureDetailsView(@NonNull View view, String feels, String tmax, String tmin) {
-        LinearLayout temperatureDetailsLayout = view.findViewById(R.id.temperature_details_layout);
+    private void setTemperatureDetailsView(String feels, String tmax, String tmin) {
         makeField(temperatureDetailsLayout, R.string.feels_like_field, feels, R.string.temperature_unit);
         makeField(temperatureDetailsLayout, R.string.temp_max_field, tmax, R.string.temperature_unit);
         makeField(temperatureDetailsLayout, R.string.temp_min_field, tmin, R.string.temperature_unit);
@@ -208,11 +219,9 @@ public class HomeFragment extends Fragment {
             temperatureDetailsLayout.setVisibility(View.VISIBLE);
         }
         else temperatureDetailsLayout.setVisibility(View.GONE);
-
     }
 
-    private void showPressureHumidityView(@NonNull View view, String pressure, String humidity) {
-        LinearLayout pressureHumidityLayout = view.findViewById(R.id.pressure_humidity_layout);
+    private void setPressureHumidityView(String pressure, String humidity) {
         makeField(pressureHumidityLayout, R.string.pressure_field, pressure, R.string.pressure_unit);
         makeField(pressureHumidityLayout, R.string.humidity_field, humidity, R.string.humidity_unit);
         if (requireActivity()
@@ -223,8 +232,7 @@ public class HomeFragment extends Fragment {
         else pressureHumidityLayout.setVisibility(View.GONE);
     }
 
-    private void showWindView(@NonNull View view, String speed, String direction) {
-        LinearLayout windLayout = view.findViewById(R.id.wind_layout);
+    private void setWindView(String speed, String direction) {
         makeField(windLayout, R.string.wind_speed_field, speed, R.string.wind_speed_unit);
         makeField(windLayout, R.string.wind_direction_field, direction, R.string.wind_direction_unit);
         if (requireActivity().getPreferences(MODE_PRIVATE).getBoolean(WIND_SPEED_AND_DIRECTION, false)) {
@@ -233,8 +241,7 @@ public class HomeFragment extends Fragment {
         else windLayout.setVisibility(View.GONE);
     }
 
-    private void showVisibilityView(@NonNull View view, String visibility) {
-        LinearLayout visibilityLayout = view.findViewById(R.id.visibility_layout);
+    private void setVisibilityView(String visibility) {
         makeField(visibilityLayout, R.string.visibility_field, visibility, R.string.visibility_unit);
         if (requireActivity()
                 .getPreferences(MODE_PRIVATE)
@@ -244,8 +251,7 @@ public class HomeFragment extends Fragment {
         else visibilityLayout.setVisibility(View.GONE);
     }
 
-    private void showSunView(@NonNull View view, String sunrise, String sunset) {
-        LinearLayout sunLayout = view.findViewById(R.id.sun_layout);
+    private void setSunView(String sunrise, String sunset) {
         makeField(sunLayout, R.string.sunrise_field, sunrise, R.string.time_unit);
         makeField(sunLayout, R.string.sunset_field, sunset, R.string.time_unit);
         if (getActivity() != null && getActivity().getPreferences(MODE_PRIVATE).getBoolean(SUNRISE_AND_SUNSET, false)) {
@@ -265,8 +271,7 @@ public class HomeFragment extends Fragment {
         layout.addView(view);
     }
 
-    private void goToBrowserButton(@NonNull View view) {
-        TextView moreInfo = view.findViewById(R.id.more_info);
+    private void goToBrowserButton() {
         moreInfo.setVisibility(View.VISIBLE);
         moreInfo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -300,8 +305,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void setBackgroundView(View view) {
-        ImageView background = view.findViewById(R.id.background);
+    private void setBackgroundView() {
         TypedArray images = getResources().obtainTypedArray(R.array.city_images);
         if (getIndex() == -1) {
             background.setImageResource(R.drawable.background_default);
@@ -311,6 +315,18 @@ public class HomeFragment extends Fragment {
         }
         background.setVisibility(View.VISIBLE);
         images.recycle();
+    }
+
+    private void addRecordToDatabase(RequestHandler requestHandler) {
+        WeatherDao weatherDao = App
+                .getInstance()
+                .getWeatherDao();
+        WeatherSource weatherSource = new WeatherSource(weatherDao);
+        WeatherRecord weatherRecord = new WeatherRecord();
+        weatherRecord.place = requestHandler.getPlace();
+        weatherRecord.temperature = requestHandler.getTemp();
+        weatherRecord.date = requestHandler.getDate();
+        weatherSource.addWeatherRecord(weatherRecord);
     }
 
     private int getIndex() {
