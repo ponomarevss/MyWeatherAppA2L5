@@ -1,6 +1,8 @@
-package com.ponomarevss.myweatherapp;
+package com.ponomarevss.myweatherapp.request;
 
-import com.ponomarevss.myweatherapp.rest.entities.WeatherRequestRestModel;
+import com.ponomarevss.myweatherapp.rest.weatherModel.WeatherRequestRestModel;
+
+import java.util.Date;
 
 public class RequestHandler {
 
@@ -10,24 +12,31 @@ public class RequestHandler {
         this.response = response;
     }
 
-    public String getIcon() {
-        return response.weather[0].icon;
+    public long getId() {
+        return response.id;
     }
 
-    public String getWeatherDescription() {
-        return response.weather[0].description;
+    public String getPlace() {
+        return response.name;
     }
+
 
     public String getCoordLat() {
         return String.valueOf(response.coordinates.lat);
     }
-
     public String getCoordLon() {
         return String.valueOf(response.coordinates.lon);
     }
 
+    public String getIcon() {
+        return response.weather[0].icon;
+    }
+
     public String getTemp() {
         return String.valueOf(response.main.temp);
+    }
+    public String getWeatherDescription() {
+        return response.weather[0].description;
     }
 
     public String getTempFeelsLike() {
@@ -63,5 +72,12 @@ public class RequestHandler {
     }
     public String getWindDeg() {
         return String.valueOf(response.wind.deg);
+    }
+
+    public String getDate() {
+        return String.valueOf(new Date(response.dt * 1000));
+    }
+    public long getDt() {
+        return response.dt;
     }
 }

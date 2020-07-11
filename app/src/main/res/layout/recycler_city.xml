@@ -25,12 +25,7 @@
         android:layout_margin="20dp"
         android:layout_gravity="center_vertical"
 
-        android:shadowColor="@color/colorBlack"
-        android:shadowDx="1"
-        android:shadowDy="1"
-        android:shadowRadius="1"
-        android:textAllCaps="false"
-        android:textColor="@color/colorWhite"
+        android:textColor="@color/colorBlack"
         android:textColorHighlight="@color/colorBlack"
         android:textStyle="bold"
         android:textSize="18sp"

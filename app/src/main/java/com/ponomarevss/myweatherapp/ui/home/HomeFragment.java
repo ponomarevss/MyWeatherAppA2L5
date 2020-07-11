@@ -19,27 +19,70 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import com.ponomarevss.myweatherapp.App;
 import com.ponomarevss.myweatherapp.R;
-import com.ponomarevss.myweatherapp.RequestHandler;
-import com.ponomarevss.myweatherapp.WeatherRequest;
+import com.ponomarevss.myweatherapp.request.RequestHandler;
+import com.ponomarevss.myweatherapp.request.WeatherRequest;
+import com.ponomarevss.myweatherapp.room.WeatherDao;
+import com.ponomarevss.myweatherapp.room.WeatherRecord;
+import com.ponomarevss.myweatherapp.room.WeatherSource;
 import com.squareup.picasso.Picasso;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.ponomarevss.myweatherapp.Constants.COORDINATES;
+import static com.ponomarevss.myweatherapp.Constants.DESCR2;
+import static com.ponomarevss.myweatherapp.Constants.DT2;
+import static com.ponomarevss.myweatherapp.Constants.FEELS2;
+import static com.ponomarevss.myweatherapp.Constants.HUM2;
+import static com.ponomarevss.myweatherapp.Constants.ICON2;
+import static com.ponomarevss.myweatherapp.Constants.ID2;
 import static com.ponomarevss.myweatherapp.Constants.INDEX;
 import static com.ponomarevss.myweatherapp.Constants.INIT_INDEX;
-import static com.ponomarevss.myweatherapp.Constants.PLACE;
+import static com.ponomarevss.myweatherapp.Constants.LAT2;
+import static com.ponomarevss.myweatherapp.Constants.LON2;
+import static com.ponomarevss.myweatherapp.Constants.OBSOLESCENCE_TIME;
+import static com.ponomarevss.myweatherapp.Constants.PLACE2;
+import static com.ponomarevss.myweatherapp.Constants.PRESS2;
 import static com.ponomarevss.myweatherapp.Constants.PRESSURE_AND_HUMIDITY;
-import static com.ponomarevss.myweatherapp.Constants.SET_PLACE;
+import static com.ponomarevss.myweatherapp.Constants.SRISE2;
+import static com.ponomarevss.myweatherapp.Constants.SSET2;
 import static com.ponomarevss.myweatherapp.Constants.SUNRISE_AND_SUNSET;
+import static com.ponomarevss.myweatherapp.Constants.TEMP2;
 import static com.ponomarevss.myweatherapp.Constants.TEMPERATURE_DETAILS;
+import static com.ponomarevss.myweatherapp.Constants.TMAX2;
+import static com.ponomarevss.myweatherapp.Constants.TMIN2;
+import static com.ponomarevss.myweatherapp.Constants.VIS2;
 import static com.ponomarevss.myweatherapp.Constants.VISIBILITY;
+import static com.ponomarevss.myweatherapp.Constants.WDIR2;
 import static com.ponomarevss.myweatherapp.Constants.WIND_SPEED_AND_DIRECTION;
+import static com.ponomarevss.myweatherapp.Constants.WSPEED2;
 
 public class HomeFragment extends Fragment {
+
+    private RequestHandler requestHandler;
+    private ImageView background;
+    private TextView placeTextView;
+    private LinearLayout coordinatesLayout;
+    private ImageView weatherIcon;
+    private TextView temperatureView;
+    private TextView temperatureUnitView;
+    private TextView weatherDescriptionView;
+    private LinearLayout temperatureDetailsLayout;
+    private LinearLayout pressureHumidityLayout;
+    private LinearLayout windLayout;
+    private LinearLayout visibilityLayout;
+    private LinearLayout sunLayout;
+    private TextView moreInfo;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -49,92 +92,172 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setBackgroundView(view);
-        if (getCityId() != null) {
-            new WeatherRequest(this, view, getCityId())
-                    .makeRequest();
+        init(view);
+
+        //если первый запуск, делаем запрос по инициальному индексу. в дальнейшем запрос изменится на запрос по геоданным
+        if (restoreStringData(PLACE2).equals(PLACE2)) {
+            new WeatherRequest(this, view, getCityId(INIT_INDEX)).makeRequest();
         }
+
+        //если данные в shared preferences актуальные, то инициализируем фрагмент сохраненными данными
+        else if (actualDate() && actualPlace()) {
+            setBackgroundView();
+            setPlaceView(restoreStringData(PLACE2));
+            setCoordinatesView(restoreStringData(LAT2),
+                    restoreStringData(LON2));
+            setWeatherIconView(restoreStringData(ICON2));
+            setTemperatureView(restoreStringData(TEMP2));
+            setWeatherDescriptionView(restoreStringData(DESCR2));
+            setTemperatureDetailsView(restoreStringData(FEELS2),
+                    restoreStringData(TMAX2),
+                    restoreStringData(TMIN2));
+            setPressureHumidityView(restoreStringData(PRESS2),
+                    restoreStringData(HUM2));
+            setWindView(restoreStringData(WSPEED2),
+                    restoreStringData(WDIR2));
+            setVisibilityView(restoreStringData(VIS2));
+            setSunView(restoreStringData(SRISE2),
+                    restoreStringData(SSET2));
+            goToBrowserButton();
+        }
+
+        //если данные не актуальные выполняем новый запрос
+        else {
+            String cityId = getCityId(getIndex());
+            if (cityId != null) {
+                new WeatherRequest(this, view, cityId).makeRequest();
+            }
+        }
+
     }
 
-    public void init(@NonNull View view, RequestHandler requestHandler) {
-        setPlaceView(view);
-        showCoordinatesView(view, requestHandler);
-        showWeatherIconView(view, requestHandler);
-        showTemperatureView(view, requestHandler);
-        showWeatherDescriptionView(view, requestHandler);
-        showTemperatureDetailsView(view, requestHandler);
-        showPressureHumidityView(view, requestHandler);
-        showVisibilityView(view, requestHandler);
-        showWindView(view, requestHandler);
-        showSunView(view, requestHandler);
-        goToBrowserButton(view);
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 
-    private void showWeatherIconView(View view, RequestHandler requestHandler) {
-        ImageView weatherIcon = view.findViewById(R.id.weather_icon);
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(RequestHandler requestHandler) {
+        this.requestHandler = requestHandler;
+        setBackgroundView();
+        setPlaceView(requestHandler.getPlace());
+        setCoordinatesView(requestHandler.getCoordLat(),
+                requestHandler.getCoordLon());
+        setWeatherIconView(requestHandler.getIcon());
+        setTemperatureView(requestHandler.getTemp());
+        setWeatherDescriptionView(requestHandler.getWeatherDescription());
+        setTemperatureDetailsView(requestHandler.getTempFeelsLike(),
+                requestHandler.getTempMax(),
+                requestHandler.getTempMin());
+        setPressureHumidityView(requestHandler.getPressure(),
+                requestHandler.getHumidity());
+        setWindView(requestHandler.getWindSpeed(),
+                requestHandler.getWindDeg());
+        setVisibilityView(requestHandler.getVisibility());
+        setSunView(requestHandler.getSunrise(),
+                requestHandler.getSunset());
+        goToBrowserButton();
+
+        if (!actualPlace()) addRecordToDatabase(requestHandler); //если меняется место, добавляем запись в историю
+        saveFragmentData(); //сохраняем данные в Shared Preferences
+    }
+
+    private void init(@NonNull View view) {
+        background = view.findViewById(R.id.background);
+        placeTextView = view.findViewById(R.id.place);
+        coordinatesLayout = view.findViewById(R.id.coordinates_layout);
+        weatherIcon = view.findViewById(R.id.weather_icon);
+        temperatureView = view.findViewById(R.id.temperature_value);
+        temperatureUnitView = view.findViewById(R.id.temperature_unit);
+        weatherDescriptionView = view.findViewById(R.id.weather_description);
+        temperatureDetailsLayout = view.findViewById(R.id.temperature_details_layout);
+        pressureHumidityLayout = view.findViewById(R.id.pressure_humidity_layout);
+        windLayout = view.findViewById(R.id.wind_layout);
+        visibilityLayout = view.findViewById(R.id.visibility_layout);
+        sunLayout = view.findViewById(R.id.sun_layout);
+        moreInfo = view.findViewById(R.id.more_info);
+    }
+
+    private void setPlaceView(String place) {
+        placeTextView.setText(place);
+    }
+
+    private void setCoordinatesView(String lat, String lon) {
+        makeField(coordinatesLayout, R.string.latitude_field, lat, R.string.coordinates_unit);
+        makeField(coordinatesLayout, R.string.longitude_field, lon, R.string.coordinates_unit);
+        if (requireActivity()
+                .getPreferences(MODE_PRIVATE)
+                .getBoolean(COORDINATES, false)) {
+            coordinatesLayout.setVisibility(View.VISIBLE);
+        }
+        else coordinatesLayout.setVisibility(View.GONE);
+    }
+
+    private void setWeatherIconView(String icon) {
         Picasso.get()
-                .load(String.format(getString(R.string.icon_uri), requestHandler.getIcon()))
+                .load(String.format(getString(R.string.icon_uri), icon))
                 .into(weatherIcon);
     }
 
-    private void showSunView(View view, RequestHandler requestHandler) {
-        if (getActivity() != null && getActivity().getPreferences(MODE_PRIVATE).getBoolean(SUNRISE_AND_SUNSET, false)) {
-            LinearLayout sunLayout = view.findViewById(R.id.sun_layout);
-            makeField(sunLayout, R.string.sunrise_field, requestHandler.getSunrise(), R.string.time_unit);
-            makeField(sunLayout, R.string.sunset_field, requestHandler.getSunset(), R.string.time_unit);
-        }
-    }
-
-    private void showWindView(View view, RequestHandler requestHandler) {
-        if (getActivity() != null && getActivity().getPreferences(MODE_PRIVATE).getBoolean(WIND_SPEED_AND_DIRECTION, false)) {
-            LinearLayout windLayout = view.findViewById(R.id.wind_layout);
-            makeField(windLayout, R.string.wind_speed_field, requestHandler.getWindSpeed(), R.string.wind_speed_unit);
-            makeField(windLayout, R.string.wind_direction_field, requestHandler.getWindDeg(), R.string.wind_direction_unit);
-        }
-    }
-
-    private void showVisibilityView(View view, RequestHandler requestHandler) {
-        if (getActivity() != null && getActivity().getPreferences(MODE_PRIVATE).getBoolean(VISIBILITY, false)) {
-            LinearLayout visibilityLayout = view.findViewById(R.id.visibility_layout);
-            makeField(visibilityLayout, R.string.visibility_field, requestHandler.getVisibility(), R.string.visibility_unit);
-        }
-    }
-
-    private void showPressureHumidityView(View view, RequestHandler requestHandler) {
-        if (getActivity() != null && getActivity().getPreferences(MODE_PRIVATE).getBoolean(PRESSURE_AND_HUMIDITY, false)) {
-            LinearLayout pressureHumidityLayout = view.findViewById(R.id.pressure_humidity_layout);
-            makeField(pressureHumidityLayout, R.string.pressure_field, requestHandler.getPressure(), R.string.pressure_unit);
-            makeField(pressureHumidityLayout, R.string.humidity_field, requestHandler.getHumidity(), R.string.humidity_unit);
-        }
-    }
-
-    private void showTemperatureDetailsView(View view, RequestHandler requestHandler) {
-        if (getActivity() != null && getActivity().getPreferences(MODE_PRIVATE).getBoolean(TEMPERATURE_DETAILS, false)) {
-            LinearLayout temperatureDetailsLayout = view.findViewById(R.id.temperature_details_layout);
-            makeField(temperatureDetailsLayout, R.string.feels_like_field, requestHandler.getTempFeelsLike(), R.string.temperature_unit);
-            makeField(temperatureDetailsLayout, R.string.temp_max_field, requestHandler.getTempMax(), R.string.temperature_unit);
-            makeField(temperatureDetailsLayout, R.string.temp_min_field, requestHandler.getTempMin(), R.string.temperature_unit);
-        }
-    }
-
-    private void showTemperatureView(View view, RequestHandler requestHandler) {
-        TextView temperatureView = view.findViewById(R.id.temperature_value);
-        temperatureView.setText(requestHandler.getTemp());
-        TextView temperatureUnitView = view.findViewById(R.id.temperature_unit);
+    private void setTemperatureView(String temp) {
+        temperatureView.setText(temp);
         temperatureUnitView.setText(R.string.temperature_unit);
     }
 
-    private void showWeatherDescriptionView(View view, RequestHandler requestHandler) {
-        TextView weatherDescriptionView = view.findViewById(R.id.weather_description);
-        weatherDescriptionView.setText(requestHandler.getWeatherDescription());
+    private void setWeatherDescriptionView(String description) {
+        weatherDescriptionView.setText(description);
     }
 
-    private void showCoordinatesView(View view, RequestHandler requestHandler) {
-        if (getActivity() != null && getActivity().getPreferences(MODE_PRIVATE).getBoolean(COORDINATES, false)) {
-            LinearLayout coordinatesLayout = view.findViewById(R.id.coordinates_layout);
-            makeField(coordinatesLayout, R.string.latitude_field, requestHandler.getCoordLat(), R.string.coordinates_unit);
-            makeField(coordinatesLayout, R.string.longitude_field, requestHandler.getCoordLon(), R.string.coordinates_unit);
+    private void setTemperatureDetailsView(String feels, String tmax, String tmin) {
+        makeField(temperatureDetailsLayout, R.string.feels_like_field, feels, R.string.temperature_unit);
+        makeField(temperatureDetailsLayout, R.string.temp_max_field, tmax, R.string.temperature_unit);
+        makeField(temperatureDetailsLayout, R.string.temp_min_field, tmin, R.string.temperature_unit);
+        if (requireActivity()
+                .getPreferences(MODE_PRIVATE)
+                .getBoolean(TEMPERATURE_DETAILS, false)) {
+            temperatureDetailsLayout.setVisibility(View.VISIBLE);
         }
+        else temperatureDetailsLayout.setVisibility(View.GONE);
+    }
+
+    private void setPressureHumidityView(String pressure, String humidity) {
+        makeField(pressureHumidityLayout, R.string.pressure_field, pressure, R.string.pressure_unit);
+        makeField(pressureHumidityLayout, R.string.humidity_field, humidity, R.string.humidity_unit);
+        if (requireActivity()
+                .getPreferences(MODE_PRIVATE)
+                .getBoolean(PRESSURE_AND_HUMIDITY, false)) {
+            pressureHumidityLayout.setVisibility(View.VISIBLE);
+        }
+        else pressureHumidityLayout.setVisibility(View.GONE);
+    }
+
+    private void setWindView(String speed, String direction) {
+        makeField(windLayout, R.string.wind_speed_field, speed, R.string.wind_speed_unit);
+        makeField(windLayout, R.string.wind_direction_field, direction, R.string.wind_direction_unit);
+        if (requireActivity().getPreferences(MODE_PRIVATE).getBoolean(WIND_SPEED_AND_DIRECTION, false)) {
+            windLayout.setVisibility(View.VISIBLE);
+        }
+        else windLayout.setVisibility(View.GONE);
+    }
+
+    private void setVisibilityView(String visibility) {
+        makeField(visibilityLayout, R.string.visibility_field, visibility, R.string.visibility_unit);
+        if (requireActivity()
+                .getPreferences(MODE_PRIVATE)
+                .getBoolean(VISIBILITY, false)) {
+            visibilityLayout.setVisibility(View.VISIBLE);
+        }
+        else visibilityLayout.setVisibility(View.GONE);
+    }
+
+    private void setSunView(String sunrise, String sunset) {
+        makeField(sunLayout, R.string.sunrise_field, sunrise, R.string.time_unit);
+        makeField(sunLayout, R.string.sunset_field, sunset, R.string.time_unit);
+        if (getActivity() != null && getActivity().getPreferences(MODE_PRIVATE).getBoolean(SUNRISE_AND_SUNSET, false)) {
+            sunLayout.setVisibility(View.VISIBLE);
+        }
+        else sunLayout.setVisibility(View.GONE);
     }
 
     private void makeField(LinearLayout layout, int name, String value, int unit) {
@@ -148,8 +271,7 @@ public class HomeFragment extends Fragment {
         layout.addView(view);
     }
 
-    private void goToBrowserButton(@NonNull View view) {
-        TextView moreInfo = view.findViewById(R.id.more_info);
+    private void goToBrowserButton() {
         moreInfo.setVisibility(View.VISIBLE);
         moreInfo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,14 +288,7 @@ public class HomeFragment extends Fragment {
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                String[] city = getResources().getStringArray(R.array.cities);
-                                String[] cityUrl = getResources().getStringArray(R.array.cities_id);
-                                Map<String, String> cityHm= new HashMap<>();
-                                for (int i = 0; i < city.length; i++) {
-                                    cityHm.put(city[i], cityUrl[i]);
-                                }
-                                assert getActivity() != null;
-                                String url = getResources().getString(R.string.url) + cityHm.get(getPlace());
+                                String url = getResources().getString(R.string.url) + restoreLongData(ID2);
                                 Uri uri = Uri.parse(url);
                                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                                 Context context = getContext();
@@ -190,38 +305,78 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private String getCityId() {
-        int index = requireActivity()
-                .getPreferences(MODE_PRIVATE)
-                .getInt(INDEX, INIT_INDEX);
-        return index != -1 ? getResources().getStringArray(R.array.cities_id)[index] : null;
-    }
-    private String getPlace() {
-        return requireActivity()
-                .getPreferences(MODE_PRIVATE)
-                .getString(PLACE, SET_PLACE);
-    }
-
-    private void setPlaceView(View view) {
-        TextView placeTextView = view.findViewById(R.id.place);
-        placeTextView.setText(getPlace());
-    }
-
-    private int getBackgroundIndex() {
-        return requireActivity()
-                .getPreferences(MODE_PRIVATE)
-                .getInt(INDEX, INIT_INDEX);
-    }
-
-    private void setBackgroundView(View view) {
-        ImageView background = view.findViewById(R.id.background);
+    private void setBackgroundView() {
         TypedArray images = getResources().obtainTypedArray(R.array.city_images);
-        if (getBackgroundIndex() == INIT_INDEX) {
+        if (getIndex() == -1) {
             background.setImageResource(R.drawable.background_default);
-        } else {
-            background.setImageResource(images.getResourceId(getBackgroundIndex(), -1));
+        }
+        else {
+            background.setImageResource(images.getResourceId(getIndex(), -1));
         }
         background.setVisibility(View.VISIBLE);
         images.recycle();
+    }
+
+    private void addRecordToDatabase(RequestHandler requestHandler) {
+        WeatherDao weatherDao = App
+                .getInstance()
+                .getWeatherDao();
+        WeatherSource weatherSource = new WeatherSource(weatherDao);
+        WeatherRecord weatherRecord = new WeatherRecord();
+        weatherRecord.place = requestHandler.getPlace();
+        weatherRecord.temperature = requestHandler.getTemp();
+        weatherRecord.date = requestHandler.getDate();
+        weatherSource.addWeatherRecord(weatherRecord);
+    }
+
+    private int getIndex() {
+        return requireActivity().getPreferences(MODE_PRIVATE).getInt(INDEX, -1);
+    }
+
+    private String getCityId(int index) {
+        String[] cityId = getResources().getStringArray(R.array.cities_id);
+        if (index == -1) {
+            return null;
+        }
+        return cityId[index];
+    }
+
+    private void saveFragmentData() {
+        requireActivity()
+                .getPreferences(MODE_PRIVATE)
+                .edit()
+                .putLong(DT2, requestHandler.getDt())
+                .putLong(ID2, requestHandler.getId())
+                .putString(PLACE2, requestHandler.getPlace())
+                .putString(LAT2, requestHandler.getCoordLat())
+                .putString(LON2, requestHandler.getCoordLon())
+                .putString(ICON2, requestHandler.getIcon())
+                .putString(TEMP2, requestHandler.getTemp())
+                .putString(DESCR2, requestHandler.getWeatherDescription())
+                .putString(FEELS2, requestHandler.getTempFeelsLike())
+                .putString(TMAX2, requestHandler.getTempMax())
+                .putString(TMIN2, requestHandler.getTempMin())
+                .putString(PRESS2, requestHandler.getPressure())
+                .putString(HUM2, requestHandler.getHumidity())
+                .putString(VIS2, requestHandler.getVisibility())
+                .putString(SRISE2, requestHandler.getSunrise())
+                .putString(SSET2, requestHandler.getSunset())
+                .apply();
+    }
+
+    private String restoreStringData(String key) {
+        return requireActivity().getPreferences(MODE_PRIVATE).getString(key, key);
+    }
+
+    private long restoreLongData(String key) {
+        return requireActivity().getPreferences(MODE_PRIVATE).getLong(key, 0);
+    }
+
+    private boolean actualDate() {
+        return (System.currentTimeMillis() - restoreLongData(DT2) * 1000) < OBSOLESCENCE_TIME;
+    }
+
+    private boolean actualPlace() {
+        return getIndex() == -1 || restoreStringData(PLACE2).equals(getResources().getStringArray(R.array.cities)[getIndex()]);
     }
 }

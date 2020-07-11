@@ -11,7 +11,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ponomarevss.myweatherapp.App;
 import com.ponomarevss.myweatherapp.R;
+import com.ponomarevss.myweatherapp.room.WeatherDao;
+import com.ponomarevss.myweatherapp.room.WeatherSource;
 
 public class HistoryFragment extends Fragment {
 
@@ -24,24 +27,20 @@ public class HistoryFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // список HistoryItem
-        HistoryItem[] items = {
-                new HistoryItem("Астрахань"), new HistoryItem("Барнаул"),
-                new HistoryItem("Владивосток"), new HistoryItem("Волгоград"),
-                new HistoryItem("Воронеж"), new HistoryItem("Екатеринбург"),
-                new HistoryItem("Ижевск"), new HistoryItem("Иркутск"),
-                new HistoryItem("Казань"), new HistoryItem("Кемерово")
-        };
-
+        WeatherDao weatherDao = App
+                .getInstance()
+                .getWeatherDao();
+        WeatherSource weatherSource = new WeatherSource(weatherDao);
 
         if (getActivity() == null) return;
         RecyclerView historyRecyclerView = getActivity().findViewById(R.id.history_recycler_view);
         historyRecyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, true);
+        layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
         historyRecyclerView.setLayoutManager(layoutManager);
 
-        HistoryAdapter adapter = new HistoryAdapter(items);
+        HistoryAdapter adapter = new HistoryAdapter(weatherSource);
         historyRecyclerView.setAdapter(adapter);
-
     }
 }

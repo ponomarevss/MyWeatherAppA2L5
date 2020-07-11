@@ -56,7 +56,7 @@ public class CitiesRecyclerAdapter extends RecyclerView.Adapter<CitiesRecyclerAd
                 @Override
                 public void onClick(View v) {
                     if(clickListener != null){
-                        clickListener.OnItemClick(textView.getText().toString(), getAdapterPosition());
+                        clickListener.OnItemClick(getAdapterPosition());
                     }
                 }
             });
@@ -73,7 +73,7 @@ public class CitiesRecyclerAdapter extends RecyclerView.Adapter<CitiesRecyclerAd
 
     //определяем интерфейс ClicklListener'а
     public interface CitiesRecyclerClickListener {
-        void OnItemClick(String place, int index);
+        void OnItemClick(int index);
     }
 
     //сеттер поля ClickListener'а

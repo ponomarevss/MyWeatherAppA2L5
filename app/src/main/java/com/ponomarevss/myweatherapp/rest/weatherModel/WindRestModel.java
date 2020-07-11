@@ -1,4 +1,4 @@
-package com.ponomarevss.myweatherapp.rest.entities;
+package com.ponomarevss.myweatherapp.rest.weatherModel;
 
 import com.google.gson.annotations.SerializedName;
 
