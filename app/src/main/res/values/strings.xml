@@ -89,6 +89,7 @@
     <string name="yes">Yes</string>
     <string name="lets_go_to_web">Let\'s go to web!</string>
     <string name="icon_uri">https://openweathermap.org/img/wn/%s@2x.png</string>
+    <string name="no_network">no network</string>
 
 
 </resources>

@@ -1,9 +1,6 @@
 package com.ponomarevss.myweatherapp.request;
 
-import android.view.View;
-
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 
 import com.ponomarevss.myweatherapp.MainActivity;
 import com.ponomarevss.myweatherapp.R;
@@ -20,19 +17,17 @@ import static com.ponomarevss.myweatherapp.Constants.WEATHER_API_KEY;
 
 public class WeatherRequest {
 
-    private Fragment fragment;
-    private View view;
+    private MainActivity mainActivity;
     private String cityId;
     private RequestHandler requestHandler;
 
-    public WeatherRequest(Fragment fragment, View view, String cityId) {
-        this.fragment = fragment;
-        this.view = view;
+    public WeatherRequest(MainActivity mainActivity, String cityId) {
+        this.mainActivity = mainActivity;
         this.cityId = cityId;
     }
 
     public void makeRequest() {
-        ((MainActivity) fragment.requireActivity()).showAlertMessage(fragment.getString(R.string.loading));
+        mainActivity.showAlertMessage(mainActivity.getString(R.string.loading));
         OpenWeatherRepo
                 .getInstance()
                 .getAPI()
@@ -41,21 +36,21 @@ public class WeatherRequest {
                     @Override
                     public void onResponse(@NonNull Call<WeatherRequestRestModel> call,
                                            @NonNull Response<WeatherRequestRestModel> response) {
-                        ((MainActivity) fragment.requireActivity()).hideAlertMessage();
+                        mainActivity.hideAlertMessage();
                         if (response.body() != null && response.isSuccessful()) {
                             requestHandler = new RequestHandler(response.body());
                             EventBus.getDefault().post(requestHandler);
                         }
                         else {
-                            ((MainActivity) fragment.requireActivity()).showAlertMessage(fragment.getString(R.string.failed_to_get_data));
+                            mainActivity.showAlertMessage(mainActivity.getString(R.string.failed_to_get_data));
                         }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<WeatherRequestRestModel> call,
                                           @NonNull Throwable t) {
-                        ((MainActivity) fragment.requireActivity()).hideAlertMessage();
-                        ((MainActivity) fragment.requireActivity()).showAlertMessage(fragment.getString(R.string.failed_to_get_data));
+                        mainActivity.hideAlertMessage();
+                        mainActivity.showAlertMessage(mainActivity.getString(R.string.failed_to_get_data));
                     }
                 });
 

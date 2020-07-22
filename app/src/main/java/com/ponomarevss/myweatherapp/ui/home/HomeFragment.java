@@ -1,7 +1,6 @@
 package com.ponomarevss.myweatherapp.ui.home;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.TypedArray;
@@ -20,6 +19,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.ponomarevss.myweatherapp.App;
+import com.ponomarevss.myweatherapp.MainActivity;
 import com.ponomarevss.myweatherapp.R;
 import com.ponomarevss.myweatherapp.request.RequestHandler;
 import com.ponomarevss.myweatherapp.request.WeatherRequest;
@@ -33,33 +33,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.ponomarevss.myweatherapp.Constants.COORDINATES;
-import static com.ponomarevss.myweatherapp.Constants.DESCR2;
-import static com.ponomarevss.myweatherapp.Constants.DT2;
-import static com.ponomarevss.myweatherapp.Constants.FEELS2;
-import static com.ponomarevss.myweatherapp.Constants.HUM2;
-import static com.ponomarevss.myweatherapp.Constants.ICON2;
-import static com.ponomarevss.myweatherapp.Constants.ID2;
-import static com.ponomarevss.myweatherapp.Constants.INDEX;
-import static com.ponomarevss.myweatherapp.Constants.INIT_INDEX;
-import static com.ponomarevss.myweatherapp.Constants.LAT2;
-import static com.ponomarevss.myweatherapp.Constants.LON2;
-import static com.ponomarevss.myweatherapp.Constants.OBSOLESCENCE_TIME;
-import static com.ponomarevss.myweatherapp.Constants.PLACE2;
-import static com.ponomarevss.myweatherapp.Constants.PRESS2;
-import static com.ponomarevss.myweatherapp.Constants.PRESSURE_AND_HUMIDITY;
-import static com.ponomarevss.myweatherapp.Constants.SRISE2;
-import static com.ponomarevss.myweatherapp.Constants.SSET2;
-import static com.ponomarevss.myweatherapp.Constants.SUNRISE_AND_SUNSET;
-import static com.ponomarevss.myweatherapp.Constants.TEMP2;
-import static com.ponomarevss.myweatherapp.Constants.TEMPERATURE_DETAILS;
-import static com.ponomarevss.myweatherapp.Constants.TMAX2;
-import static com.ponomarevss.myweatherapp.Constants.TMIN2;
-import static com.ponomarevss.myweatherapp.Constants.VIS2;
-import static com.ponomarevss.myweatherapp.Constants.VISIBILITY;
-import static com.ponomarevss.myweatherapp.Constants.WDIR2;
-import static com.ponomarevss.myweatherapp.Constants.WIND_SPEED_AND_DIRECTION;
-import static com.ponomarevss.myweatherapp.Constants.WSPEED2;
+import static com.ponomarevss.myweatherapp.Constants.*;
 
 public class HomeFragment extends Fragment {
 
@@ -96,7 +70,8 @@ public class HomeFragment extends Fragment {
 
         //если первый запуск, делаем запрос по инициальному индексу. в дальнейшем запрос изменится на запрос по геоданным
         if (restoreStringData(PLACE2).equals(PLACE2)) {
-            new WeatherRequest(this, view, getCityId(INIT_INDEX)).makeRequest();
+            new WeatherRequest((MainActivity) getActivity(), getCityId(INIT_INDEX)).makeRequest();
+//            new WeatherRequest(this, getCityId(INIT_INDEX)).makeRequest();
         }
 
         //если данные в shared preferences актуальные, то инициализируем фрагмент сохраненными данными
@@ -125,7 +100,8 @@ public class HomeFragment extends Fragment {
         else {
             String cityId = getCityId(getIndex());
             if (cityId != null) {
-                new WeatherRequest(this, view, cityId).makeRequest();
+                new WeatherRequest((MainActivity) getActivity(), cityId).makeRequest();
+//                new WeatherRequest(this, cityId).makeRequest();
             }
         }
 
@@ -261,13 +237,14 @@ public class HomeFragment extends Fragment {
     }
 
     private void makeField(LinearLayout layout, int name, String value, int unit) {
-        View view = getLayoutInflater().inflate(R.layout.detail_layout, layout, false);
+        View view = getLayoutInflater()
+                .inflate(R.layout.detail_layout, layout, false);
         ((TextView) view.findViewById(R.id.detail_name))
-                .setText(getResources().getString(name)); //имя
+                .setText(getResources().getString(name));
         ((TextView) view.findViewById(R.id.detail_value))
-                .setText(value); //значение
+                .setText(value);
         ((TextView) view.findViewById(R.id.detail_unit))
-                .setText(getResources().getString(unit)); //единица измерения
+                .setText(getResources().getString(unit));
         layout.addView(view);
     }
 
@@ -279,24 +256,18 @@ public class HomeFragment extends Fragment {
                 AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
                 builder.setMessage(R.string.lets_go_to_web)
                         .setCancelable(true)
-                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                //не делать ничего
-                            }
+                        .setNegativeButton(R.string.no, (dialog, which) -> {
+                            //не делать ничего
                         })
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                String url = getResources().getString(R.string.url) + restoreLongData(ID2);
-                                Uri uri = Uri.parse(url);
-                                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                                Context context = getContext();
-                                if (context == null) return;
-                                ActivityInfo activityInfo = intent.resolveActivityInfo(context.getPackageManager(), intent.getFlags());
-                                if (activityInfo != null) {
-                                    startActivity(intent);
-                                }
+                        .setPositiveButton(R.string.yes, (dialog, which) -> {
+                            String url = getResources().getString(R.string.url) + restoreLongData(ID2);
+                            Uri uri = Uri.parse(url);
+                            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                            Context context = getContext();
+                            if (context == null) return;
+                            ActivityInfo activityInfo = intent.resolveActivityInfo(context.getPackageManager(), intent.getFlags());
+                            if (activityInfo != null) {
+                                startActivity(intent);
                             }
                         })
                         .create()
